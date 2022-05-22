@@ -383,6 +383,13 @@
       <Groups>
         <Group>
           <GroupName>Source Group 1</GroupName>
+          <Files>
+            <File>
+              <FileName>ROBOT.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\ROBOT.C</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>::CMSIS</GroupName>
