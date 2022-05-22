@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "TEST.C": "cpp",
-        "MAIN.C": "cpp"
+        "MAIN.C": "cpp",
+        "DTMF.C": "cpp"
     }
 }
