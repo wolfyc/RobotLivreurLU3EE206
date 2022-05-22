@@ -1,13 +1,48 @@
 #include "LPC17xx.h"
 
-unsigned char test = 0;
-void init_proc(void){
-	LPC_GPIO2->FIODIR = 0xFF;
+#define PCLK 25000000
+#define freq_init_1khz 1000 
+
+unsigned int VALEUR[36] = {511,611,707,795,872,936,983,1012,1022,\
+	1012,983,936,872,795,707,611,511,411,315,227,150,86,39,10,0,10,39,86,150,227,315,411,511,611,707,795};
+
+void init_dac(){
+	LPC_SC->PCLKSEL0 &= ~(3<<22);//ASSURER QUE LHORLOGE EST A 25MHZ 
+    LPC_PINCON->PINSEL1 |= 1<<21;//SET TO DAC ON
+    LPC_PINCON->PINSEL1 &= ~(1<<20); //SET TO DAC ON
 }
-	int main(void){
-		init_proc();
-		while(1){
-			test++;
-			LPC_GPIO2->FIOPIN = test;
-		}
+
+void init_T0(){ // timer pour controler la vitessse de lecture du tableau de valeur
+	unsigned int smartAquit = LPC_TIM0->IR;
+	LPC_TIM0->IR = smartAquit; // AQUITEMENT
+	LPC_SC->PCLKSEL0 &= ~(3<<2); //PCLK 25MHZ
+	LPC_TIM0->MR0 = PCLK / freq_init_1khz; // VALEUR DE COMPTEUR
+	LPC_TIM0->MCR |= (3<<0) ;//INTERRUPTION & RESET DE TIMER
+	LPC_TIM0->TCR |= 1; // TIMER0 ON
+	NVIC_EnableIRQ(TIMER0_IRQn); // ACTIVE L'INERRUPTION
+}
+
+void TIMER0_IRQHandler(){
+	unsigned int smartAquit = LPC_TIM0->IR; // AQUITEMENT
+	LPC_TIM0->IR = smartAquit; // AQUITEMENT
+	static int index_val = 0;
+	if (v < 36){
+			LPC_DAC->DACR = (VALEUR[v]<<6);
+			v++;
+			if (index_val >= 36){
+				index_val = 0;
+			}
 	}
+	LPC_TIM0->TCR |= 1;
+}
+
+
+int main(){
+    init_dac();
+	init_T0();
+    while(1){
+		
+		}
+		
+	}
+
