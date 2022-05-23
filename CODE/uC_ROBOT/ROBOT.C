@@ -100,10 +100,19 @@ void TIMER0_IRQHandler()
 	};
 	void TIMER1_IRQHandler()
 	{
-		LPC_TIM1->IR|=(1<<i);
-		i^=1;
-				
+
+        if ((LPC_TIM1->IR)&(1<<0))
+		{
+			LPC_TIM1->IR|=1;
+			LPC_DAC->DACR=0;
+		}
+		else	
+			  if ((LPC_TIM1->IR)&(1<<1))	
+			{
+	   	        LPC_TIM1->IR|=2;
+			}			
 	}
+				
 	
 	
 int main(void)
