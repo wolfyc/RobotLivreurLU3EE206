@@ -4,9 +4,7 @@ int T0clk =25000000;
 int i =0 ;
 int T_mes=10;
 int mes=0 ;
-int son ;
 int f ;
-
 unsigned int VALEUR[36] = {511,611,707,795,872,936,983,1012,1022,\
 	1012,983,936,872,795,707,611,511,411,315,227,150,86,39,10,0,10,39,86,150,227,315,411,511,611,707,795};
 
@@ -24,7 +22,7 @@ void init_Telemetre ()
 		LPC_PINCON->PINSEL0&=~((3<<2)|(3<<4));
 		LPC_GPIO0-> FIODIR&=~(3<<1);
 		mes=(LPC_GPIO0-> FIOPIN)&(3<<1);
-		mes=mes>>1;
+		mes=(mes>>1);
 		mes=mes^3;
 		
 switch(mes)
@@ -104,28 +102,6 @@ void TIMER0_IRQHandler()
 	{
 		LPC_TIM1->IR|=(1<<i);
 		i^=1;
-		son^=1
-				
-	}
-
-void sound_emmit()	
-{
-		LPC_TIM2->MR0=(0.001/36)*T0clk;
-		LPC_TIM2->MCR|=(3<<0);
-		LPC_TIM2->MCR&=~(1<<2);
-	
-		NVIC_EnableIRQ(TIMER2_IRQn);
-}
-
-	void TIMER2_IRQHandler()
-	{
-		LPC_TIM1->IR|=(1<<0);
-		Sortie= Value[n];
-		n++;
-		if (n>35)
-		{
-			n=0;
-		}
 				
 	}
 	
@@ -158,4 +134,20 @@ float dist ;
 		}; 		// Waiting mode 
 		
 		return 0;
+	}
+	
+
+
+	void  sound_emmit()	
+	{
+	  LPC_PINCON->PINSEL1&=~(1<<20);
+		LPC_PINCON->PINSEL1|=	(1<<21);
+		LPC_DAC->DACR=Value[n];
+		n++;
+		
+		if (n>35)
+		{
+			n=0;
+		}
+				
 	}
