@@ -4,9 +4,11 @@ int T0clk =25000000;
 int i =0 ;
 int T_mes=10;
 int mes=0 ;
-
+int son ;
 int f ;
 
+unsigned int VALEUR[36] = {511,611,707,795,872,936,983,1012,1022,\
+	1012,983,936,872,795,707,611,511,411,315,227,150,86,39,10,0,10,39,86,150,227,315,411,511,611,707,795};
 
 void init_Telemetre ()
 	{
@@ -102,10 +104,32 @@ void TIMER0_IRQHandler()
 	{
 		LPC_TIM1->IR|=(1<<i);
 		i^=1;
-		
-		
+		son^=1
+				
 	}
 
+void sound_emmit()	
+{
+		LPC_TIM2->MR0=(0.001/36)*T0clk;
+		LPC_TIM2->MCR|=(3<<0);
+		LPC_TIM2->MCR&=~(1<<2);
+	
+		NVIC_EnableIRQ(TIMER2_IRQn);
+}
+
+	void TIMER2_IRQHandler()
+	{
+		LPC_TIM1->IR|=(1<<0);
+		Sortie= Value[n];
+		n++;
+		if (n>35)
+		{
+			n=0;
+		}
+				
+	}
+	
+	
 int main(void)
 
 float dist ;
@@ -120,12 +144,14 @@ float dist ;
 			{
 				// don't emmit the sound
 				LPC_TIM1->TCR=2;
+				LPC_DAC->DACR=0;
 			}
 			else
 				if (dist>20)
 			{
 				LPC_TIM1->TCR=1;
 				f=(10-(d/0.1))*0.25+0.5;
+				sound_emmit();
 			}
 			  LPC_TIM1->MR1=(1/(float)f)*T0clk;
 			
