@@ -86,7 +86,8 @@ void TIMER0_IRQHandler()
 
 	void Obstacle_Warning()
 	{
-		LPC_TIM1->MR0=0.25*T0clk;
+		LPC_TIM1->MR0=0.25*
+        ;
 		LPC_TIM1->MCR|=(1<<0);
 		LPC_TIM1->MCR&=~(3<<1);
 		
